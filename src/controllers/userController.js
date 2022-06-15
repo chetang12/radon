@@ -49,11 +49,11 @@ const getUserData = async function (req, res) {
 
   console.log(token);
   
-  // If a token is present then decode the token with verify function
-  // verify takes two inputs:
-  // Input 1 is the token to be decoded
-  // Input 2 is the same secret with which the token was generated
-  // Check the value of the decoded token yourself
+//   If a token is present then decode the token with verify function
+//   verify takes two inputs:
+//   Input 1 is the token to be decoded
+//   Input 2 is the same secret with which the token was generated
+//   Check the value of the decoded token yourself
   let decodedToken = jwt.verify(token, "functionup-radon");
   if (!decodedToken)
     return res.send({ status: false, msg: "token is invalid" });
@@ -79,12 +79,25 @@ const updateUser = async function (req, res) {
     return res.send("No such user exists");
   }
 
-  let userData = req.body;
-  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
+//   let userData = req.body;
+  let updatedUser = await userModel.findOneAndUpdate({ _id: userId },  {$set: req.body }, {new: true},);
   res.send({ status: updatedUser, data: updatedUser });
 };
 
+
+//delete 
+const deletDetails = async function(req,res){
+    let userId = req.params.userId
+    let user = await userModel.findById(userId);
+    if (!user) {
+        return res.send("No such user exists");
+      }
+      let deletedetailsUser = await userModel.deleteOne({ _id: userId }, {new: true},);
+      res.send({ status: deletedetailsUser, data: deletedetailsUser });
+}
+
 module.exports.createUser = createUser;
+module.exports.deletDetails = deletDetails;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;
 module.exports.loginUser = loginUser;
